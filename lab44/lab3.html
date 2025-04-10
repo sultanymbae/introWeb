@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>To-Do List</title>
+    <style>
+        .completed {
+            text-decoration: line-through;
+            color: gray;
+        }
+        .task {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 350px;
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+        .buttons {
+            display: flex;
+            gap: 5px;
+        }
+        .check-btn, .delete-btn {
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            font-size: 14px;
+        }
+        .check-btn {
+            background-color: green;
+            color: white;
+        }
+        .delete-btn {
+            background-color: red;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h2>To-Do List</h2>
+    <input type="text" id="taskInput" placeholder="Enter a task">
+    <button id="addTask">Add Task</button>
+    <ul id="taskList"></ul>
+
+<script>
+    let taskInput = document.getElementById("taskInput");
+    let addTaskButton = document.getElementById("addTask");
+    let taskList = document.getElementById("taskList");
+
+    addTaskButton.onclick = function() {
+        let taskText = taskInput.value.trim();
+        if (taskText === "") {
+            alert("Task cannot be empty!");
+            return;
+        }
+
+        addTask(taskText, false);
+        taskInput.value = "";
+        saveTasks();
+    };
+
+    function addTask(taskText, isCompleted) {
+        let li = document.createElement("li");
+        li.classList.add("task");
+        if (isCompleted) li.classList.add("completed");
+
+        let span = document.createElement("span");
+        span.textContent = taskText;
+
+        let buttonsDiv = document.createElement("div");
+        buttonsDiv.classList.add("buttons");
+
+
+        let checkBtn = document.createElement("button");
+        checkBtn.textContent = "✅";
+        checkBtn.classList.add("check-btn");
+        checkBtn.onclick = function() {
+            if (li.classList.contains("completed")) {
+                taskList.removeChild(li);
+            } else {
+                li.classList.add("completed");
+            }
+            saveTasks();
+        };
+
+
+        let deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "✖";
+        deleteBtn.classList.add("delete-btn");
+        deleteBtn.onclick = function() {
+            taskList.removeChild(li);
+            saveTasks();
+        };
+
+        buttonsDiv.appendChild(checkBtn);
+        buttonsDiv.appendChild(deleteBtn);
+        li.appendChild(span);
+        li.appendChild(buttonsDiv);
+        taskList.appendChild(li);
+    }
+
+    function saveTasks() {
+        let tasks = [];
+        document.querySelectorAll(".task").forEach(task => {
+            tasks.push({
+                text: task.querySelector("span").textContent,
+                completed: task.classList.contains("completed")
+            });
+        });
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    function loadTasks() {
+        let savedTasks = localStorage.getItem('tasks');
+        if (!savedTasks) return;
+
+        let tasks = JSON.parse(savedTasks);
+        tasks.forEach(task => addTask(task.text, task.completed));
+    }
+
+    loadTasks();
+</script>
+
+</body>
+</html>

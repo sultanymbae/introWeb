@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>To-Do List</title>
+    <style>
+        .completed {
+            text-decoration: line-through;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+    <h2>To-Do List</h2>
+    <input type="text" id="taskInput" placeholder="Enter a task">
+    <button id="addTask">Add Task</button>
+    <ul id="taskList"></ul>
+
+<script>
+    let taskInput = document.getElementById("taskInput");
+    let addTaskButton = document.getElementById("addTask");
+    let taskList = document.getElementById("taskList");
+
+    loadTasks();
+
+    addTaskButton.onclick = function() {
+        let taskText = taskInput.value.trim();
+        if (taskText === "") {
+            alert("Task cannot be empty!");
+            return;
+        }
+
+        let li = document.createElement("li");
+        li.textContent = taskText;
+
+        li.onclick = function() {
+            li.classList.toggle("completed");
+            saveTasks();
+        };
+
+        li.ondblclick = function() {
+            taskList.removeChild(li);
+            saveTasks();
+        };
+
+        taskList.appendChild(li);
+        taskInput.value = "";
+        saveTasks();
+    };
+
+    function saveTasks() {
+        localStorage.setItem('tasks', taskList.innerHTML);
+    }
+
+    function loadTasks() {
+        let savedTasks = localStorage.getItem('tasks');
+        if (savedTasks) {
+            taskList.innerHTML = savedTasks;
+
+            let tasks = taskList.getElementsByTagName('li');
+            for (let task of tasks) {
+                task.onclick = function() {
+                    this.classList.toggle("completed");
+                    saveTasks();
+                };
+                task.ondblclick = function() {
+                    taskList.removeChild(this);
+                    saveTasks();
+                };
+            }
+        }
+    }
+</script>
+
+
+</body>
+</html>
