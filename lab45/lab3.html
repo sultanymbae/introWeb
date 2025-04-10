@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Random Joke</title>
+</head>
+<body>
+  <h2>Get a Joke</h2>
+  <button onclick="getJoke()">Get Joke</button>
+  <p id="joke"></p>
+
+  <script>
+    function getJoke() {
+      fetch('https://official-joke-api.appspot.com/random_joke')
+        .then(res => res.json())
+        .then(joke => {
+          document.getElementById('joke').textContent = `${joke.setup} — ${joke.punchline}`;
+        })
+        .catch(err => console.error('Fetch error:', err));
+    }
+  </script>
+</body>
+</html>
