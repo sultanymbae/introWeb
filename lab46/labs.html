@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Gallery</title>
+  <style>
+    /* Lab 1: Basic Grid Gallery */
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #f4f4f4;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+      padding: 20px;
+    }
+    .gallery img {
+      width: 100%;
+      border-radius: 8px;
+      transition: transform 0.3s;
+      cursor: pointer;
+    }
+    .gallery img:hover {
+      transform: scale(1.05);
+    }
+
+    /* Lab 2: Modal Styling */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      transition: opacity 0.3s;
+    }
+    .modal.active {
+      display: flex;
+    }
+    .modal img {
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 10px;
+      animation: zoomIn 0.3s;
+    }
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 30px;
+      color: white;
+      cursor: pointer;
+    }
+    .nav-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2em;
+      color: white;
+      background: none;
+      border: none;
+      cursor: pointer;
+      user-select: none;
+    }
+    .prev { left: 20px; }
+    .next { right: 20px; }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="gallery" id="gallery"></div>
+
+  <!-- Lab 2: Modal Structure -->
+  <div class="modal" id="modal">
+    <span class="close" id="closeBtn">&times;</span>
+    <button class="nav-button prev" id="prevBtn">&#10094;</button>
+    <img id="modalImage" />
+    <button class="nav-button next" id="nextBtn">&#10095;</button>
+  </div>
+
+  <script>
+    // Lab 4: Dynamic Gallery
+    const imageUrls = [
+      'https://picsum.photos/seed/1/400',
+      'https://picsum.photos/seed/2/400',
+      'https://picsum.photos/seed/3/400',
+      'https://picsum.photos/seed/4/400',
+      'https://picsum.photos/seed/5/400',
+      'https://picsum.photos/seed/6/400',
+    ];
+
+    const gallery = document.getElementById('gallery');
+    imageUrls.forEach((url, index) => {
+      const img = document.createElement('img');
+      img.src = url;
+      img.dataset.index = index;
+      gallery.appendChild(img);
+    });
+
+    // Lab 2 & 3: Modal Logic
+    const modal = document.getElementById('modal');
+    const modalImage = document.getElementById('modalImage');
+    const closeBtn = document.getElementById('closeBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+
+    let currentIndex = 0;
+
+    gallery.addEventListener('click', (e) => {
+      if (e.target.tagName === 'IMG') {
+        currentIndex = Number(e.target.dataset.index);
+        showModal();
+      }
+    });
+
+    function showModal() {
+      modal.classList.add('active');
+      modalImage.src = imageUrls[currentIndex];
+    }
+
+    function closeModal() {
+      modal.classList.remove('active');
+    }
+
+    function showNext() {
+      currentIndex = (currentIndex + 1) % imageUrls.length;
+      modalImage.src = imageUrls[currentIndex];
+    }
+
+    function showPrev() {
+      currentIndex = (currentIndex - 1 + imageUrls.length) % imageUrls.length;
+      modalImage.src = imageUrls[currentIndex];
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+    nextBtn.addEventListener('click', showNext);
+    prevBtn.addEventListener('click', showPrev);
+  </script>
+</body>
+</html>
